@@ -1,0 +1,8 @@
+# Apache 2.4 - keeps setup files and the raw page from being downloaded directly.
+Options -Indexes
+<FilesMatch "\.(sql|md)$">
+    Require all denied
+</FilesMatch>
+<Files "app.html">
+    Require all denied
+</Files>

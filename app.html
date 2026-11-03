@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LARA Attendance</title>
+  <style>
+    :root{--red:#ef4444;--orange:#f97316;--yellow:#eab308;--green:#16a34a;--blue:#2563eb;--violet:#7c3aed;--ink:#172033;--muted:#64748b;--surface:#fff;--bg:#f7f8fc}
+    *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);background:var(--bg)}
+    button,input,select{font:inherit} button{cursor:pointer}.rainbow-line{height:7px;background:linear-gradient(90deg,var(--red),var(--orange),var(--yellow),var(--green),var(--blue),var(--violet))}
+    header{background:rgba(255,255,255,.96);position:sticky;top:0;z-index:20;border-bottom:1px solid #e8ebf1}.nav{max-width:1180px;margin:auto;min-height:76px;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .brand{display:flex;align-items:center;gap:12px}.logo{height:52px;width:auto;max-width:190px;display:block;object-fit:contain}
+    .brand-copy strong{display:block;font-size:17px;letter-spacing:.5px}.brand-copy span{font-size:11px;color:var(--muted);letter-spacing:.8px}.nav-actions{display:flex;gap:10px}
+    .btn{border:0;border-radius:10px;padding:12px 18px;font-weight:800;transition:.2s}.btn-outline{background:white;border:1px solid #d9deea;color:var(--ink)}.btn-outline:hover{border-color:var(--orange);color:#000}.btn-primary{color:white;background:linear-gradient(135deg,#f97316,#ea580c);box-shadow:0 10px 24px rgba(249,115,22,.22)}#adminLogoutNav{background:#f97316;box-shadow:0 8px 18px rgba(249,115,22,.2)}#adminLogoutNav:hover{background:#ea580c}.btn-print-sheet{color:white;background:linear-gradient(135deg,var(--violet),#5b21b6);box-shadow:0 10px 24px rgba(124,58,237,.22)}
+    main{min-height:calc(100vh - 83px)}.view{display:none}.view.active{display:block}.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#fff 0%,#fbf9ff 55%,#f2f8ff 100%);min-height:610px}
+    .hero:before,.hero:after{content:"";position:absolute;border-radius:50%;filter:blur(2px);opacity:.12}.hero:before{width:400px;height:400px;right:-100px;top:-150px;background:linear-gradient(var(--yellow),var(--violet))}.hero:after{width:300px;height:300px;left:-160px;bottom:-130px;background:linear-gradient(var(--red),var(--blue))}
+    .hero-inner{max-width:1180px;margin:auto;padding:90px 24px 70px;display:grid;grid-template-columns:1.15fr .85fr;gap:55px;align-items:center;position:relative}.hero h1{font-size:52px;line-height:1.05;margin:12px 0 14px;letter-spacing:-2px}.gradient-text{background:linear-gradient(90deg,var(--red),var(--orange),var(--green),var(--blue),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}.hero .full-name{font-size:16px;font-weight:800;letter-spacing:2px;color:#4b5563}.subtitle{font-size:24px;margin:0 0 18px;color:var(--violet)}.hero-copy p{max-width:620px;color:var(--muted);line-height:1.7;font-size:17px}.hero-actions{display:flex;align-items:center;gap:14px;margin-top:30px}.btn-attend{padding:18px 28px;border-radius:14px;font-size:17px;background:linear-gradient(135deg,#f97316,#ea580c);box-shadow:0 15px 35px rgba(249,115,22,.24)}
+    .hero-inner{max-width:1180px;margin:auto;padding:90px 24px 70px;display:grid;grid-template-columns:1.15fr .85fr;gap:55px;align-items:center;position:relative}.hero h1{font-size:52px;line-height:1.05;margin:12px 0 14px;letter-spacing:-2px}.gradient-text{background:linear-gradient(90deg,var(--red),var(--orange),var(--green),var(--blue),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}.hero .full-name{font-size:16px;font-weight:800;letter-spacing:2px;color:#4b5563}.subtitle{font-size:24px;margin:0 0 18px;color:var(--violet)}.hero-copy p{max-width:620px;color:var(--muted);line-height:1.7;font-size:17px}.hero-actions{display:flex;align-items:center;gap:14px;margin-top:30px}.btn-attend{padding:18px 28px;border-radius:14px;font-size:17px;background:linear-gradient(135deg,#f97316,#ea580c);box-shadow:0 15px 35px rgba(249,115,22,.24)}
+    .clock-card{background:white;border:1px solid rgba(124,58,237,.1);border-radius:24px;padding:28px;text-align:center;box-shadow:0 25px 60px rgba(30,41,59,.11)}.clock-card .clock-label{font-size:12px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);font-weight:800}.clock-card #clockTime{font-size:38px;font-weight:900;margin:9px 0;color:var(--ink)}.clock-card #clockDate{color:var(--violet);font-weight:700}.pills{display:flex;justify-content:center;gap:7px;margin-top:18px}.pills span{width:34px;height:34px;border-radius:50%}.pills span:nth-child(1){background:var(--red)}.pills span:nth-child(2){background:var(--orange)}.pills span:nth-child(3){background:var(--yellow)}.pills span:nth-child(4){background:var(--green)}.pills span:nth-child(5){background:var(--blue)}.pills span:nth-child(6){background:var(--violet)}
+    .container{max-width:1180px;margin:auto;padding:42px 24px}.attendance-card{max-width:760px;margin:auto;background:white;border-radius:22px;border:1px solid #eaedf4;box-shadow:0 20px 50px rgba(30,41,59,.08);overflow:hidden}.card-head{padding:24px 28px;background:linear-gradient(135deg,#faf5ff,#f7fbff);border-bottom:1px solid #eee}.card-head h2{margin:0 0 4px}.card-head p{margin:0;color:var(--muted)}form{padding:28px}.section-title{font-size:13px;text-transform:uppercase;letter-spacing:1.4px;color:var(--violet);font-weight:900;margin:0 0 14px}.section-title:not(:first-child){margin-top:24px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}.field label{font-weight:750;font-size:14px}.field label span{color:#dc2626}.field input,.field select{height:48px;border:1px solid #d8deea;border-radius:10px;padding:0 13px;background:white;color:var(--ink);outline:none}    .field input:focus,.field select:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(249,115,22,.12)}.readonly{background:#f5f7fb!important;color:#64748b!important}.form-actions{margin-top:28px}.btn-present{width:100%;height:54px;border-radius:12px;background:linear-gradient(135deg,#22c55e,#15803d);color:white;font-size:17px;box-shadow:0 12px 25px rgba(22,163,74,.2)}.btn-present:disabled{opacity:.65;cursor:not-allowed}.back-link{border:0;background:none;color:var(--orange);font-weight:800;margin-bottom:14px;padding:0}.message{display:none;margin:0 28px 24px;padding:14px;border-radius:10px;font-weight:750}.message.error{display:block;background:#fef2f2;color:#991b1b;border:1px solid #fecaca}.message.success{display:block;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
+    .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:50;align-items:center;justify-content:center;padding:20px}.modal-backdrop.open{display:flex}.modal{width:min(430px,100%);background:white;border-radius:18px;padding:26px;box-shadow:0 25px 70px rgba(15,23,42,.25)}.modal h2{margin:0 0 6px}.modal p{color:var(--muted);margin-top:0}.modal .field{margin:18px 0}.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+    .thank-you-backdrop{z-index:60;padding:24px;overflow-y:auto;background:rgba(13,11,62,.76);backdrop-filter:blur(8px)}
+    .thank-you-card{position:relative;width:min(620px,100%);max-height:calc(100vh - 48px);max-height:calc(100dvh - 48px);margin:auto;padding:0;overflow:auto;text-align:center;border:1px solid rgba(255,255,255,.75);border-radius:26px;background:#fff;box-shadow:0 30px 90px rgba(13,11,62,.32)}
+    .thank-you-rainbow{height:8px;background:linear-gradient(90deg,#f5481a 0%,#fba00f 17%,#fdd50e 34%,#0f9a4a 51%,#1768d8 68%,#3a28b0 84%,#7b1fa2 100%)}
+    .thank-you-content{padding:30px clamp(22px,6vw,48px) 38px}
+    .thank-you-brand{display:flex;justify-content:center;margin-bottom:12px}
+    .thank-you-brand img{display:block;width:min(210px,70%);max-height:126px;object-fit:contain}
+    .thank-you-check{display:grid;place-items:center;width:48px;height:48px;margin:0 auto 14px;border:3px solid transparent;border-radius:50%;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(135deg,#9059ff,#c8749e,#f5915e) border-box;color:#4a1a9c;font-size:24px;font-weight:900;animation:thank-you-pop .45s ease-out both}
+    .thank-you-kicker{display:inline-block;margin:0 0 10px;padding:7px 12px;border:1px solid #eee5fb;border-radius:999px;background:#faf7ff;color:#4a1a9c;font-size:11px;font-weight:900;letter-spacing:1.5px}
+    .thank-you-card h2{margin:0 0 12px;background:linear-gradient(100deg,#6a1fb0 8%,#c34f91 55%,#e86d4f 100%);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:clamp(27px,5vw,36px);line-height:1.12;letter-spacing:-.7px}
+    .thank-you-intro{max-width:440px;margin:0 auto 22px;color:#625b72;font-size:15px;line-height:1.7}
+    .thank-you-message{padding:18px 20px;border:1px solid #f0ebf7;border-radius:16px;background:linear-gradient(135deg,#fcf9ff,#fffaf7);color:var(--ink);font-size:14px;line-height:1.75;text-align:left}
+    .thank-you-message p{margin:0 0 12px}.thank-you-message p:last-child{margin-bottom:0}
+    .thank-you-signoff{margin:20px 0 0;color:#4a1a9c;font-size:14px;font-weight:800;line-height:1.6}
+    .thank-you-actions{display:flex;justify-content:center;margin-top:22px}
+    .thank-you-actions .btn{min-width:190px;padding:14px 22px;border-radius:12px;background:linear-gradient(110deg,#6a1fb0,#a62bb8 52%,#e86d4f);box-shadow:0 10px 24px rgba(106,31,176,.22);transition:transform .2s ease,box-shadow .2s ease}
+    .thank-you-actions .btn:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(106,31,176,.28)}
+    @keyframes thank-you-pop{0%{opacity:0;transform:scale(.6)}70%{transform:scale(1.12)}100%{opacity:1;transform:scale(1)}}
+    @media(prefers-reduced-motion:reduce){.thank-you-check{animation:none}.thank-you-actions .btn{transition:none}}
+    .dashboard{background:linear-gradient(180deg,#fff7ed 0,#f8f7fc 260px,#f4f6fb 100%);min-height:calc(100vh - 83px);padding-bottom:32px}.dash-head{max-width:1180px;margin:auto;padding:34px 24px 22px;display:flex;justify-content:space-between;align-items:end}.dash-head h1{margin:0;font-size:clamp(25px,3vw,34px);letter-spacing:-.7px}.dash-head p{margin:6px 0 0;color:var(--muted)}.dash-head .activity-title-display{font-size:13px}.activity-title-display strong{color:#000;overflow-wrap:anywhere}.stats{max-width:1180px;margin:auto;padding:0 24px 20px}.stat-card{width:min(290px,100%);background:linear-gradient(135deg,#fff,#fff7ed);border:1px solid #fed7aa;border-radius:16px;padding:20px 22px;border-left:5px solid var(--orange);box-shadow:0 10px 30px rgba(30,41,59,.07)}.stat-card span{display:block;color:var(--muted);font-size:13px;font-weight:800}.stat-card strong{font-size:34px;color:#000}.table-card{max-width:1180px;margin:auto;background:white;border:1px solid #e7eaf1;border-radius:16px;overflow:hidden;box-shadow:0 12px 35px rgba(30,41,59,.07)}
+    .signature-section{width:100%}.signature-canvas{display:block;width:100%;height:170px;border:1px solid #d8deea;border-radius:10px;background:#fff;touch-action:none;cursor:crosshair}.signature-controls{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:10px}.signature-controls span,.signature-controls small,#memberLookupStatus{color:var(--muted);font-size:12px}.no-middle-option{display:flex;align-items:center;gap:8px;font-weight:500!important}.no-middle-option input{width:16px;height:16px;accent-color:var(--orange)}.signature-preview{display:block;width:110px;height:42px;object-fit:contain;object-position:left center}.signature-missing{color:var(--muted)}
+    .toolbar{padding:16px;display:grid;grid-template-columns:1fr 180px 160px;gap:10px;border-bottom:1px solid #edf0f5}.toolbar input,.toolbar select,.meeting-details input{height:42px;border:1px solid #d9deea;border-radius:9px;padding:0 12px;background:white;outline:none}.toolbar input:focus,.toolbar select:focus,.meeting-details input:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(249,115,22,.12)}.toolbar-actions{padding:16px 18px;border-bottom:1px solid #edf0f5;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}.toolbar-actions>.btn{min-height:44px;white-space:nowrap}.meeting-details{display:grid;grid-template-columns:1fr;gap:6px;margin-right:auto;flex:1 1 270px;min-width:0}.meeting-details label{font-size:13px;font-weight:800}.meeting-details input{width:100%}.activity-title-status{min-height:16px;color:#000;font-size:11px}.table-wrap{width:100%;max-width:100%;overflow:auto;max-height:520px;-webkit-overflow-scrolling:touch}table{width:100%;border-collapse:collapse;font-size:14px}.dashboard .table-wrap table{min-width:900px}th,td{text-align:left;padding:13px 12px;border-bottom:1px solid #edf0f5;white-space:nowrap}th{position:sticky;top:0;background:#fff7ed;color:#000;font-size:12px;text-transform:uppercase;letter-spacing:.5px}.status{display:inline-block;padding:5px 9px;border-radius:999px;background:#dcfce7;color:#166534;font-weight:800;font-size:12px}.empty{text-align:center!important;color:var(--muted);padding:36px!important}.print-only{display:none}
+    .folder-modal{width:min(1080px,100%);max-height:calc(100vh - 40px);padding:0;display:flex;flex-direction:column;overflow:hidden}
+    .folder-modal-head{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 26px 16px;border-bottom:1px solid #edf0f5;background:linear-gradient(135deg,#faf5ff,#f7fbff)}
+    .folder-modal-head h2{margin:0;color:var(--ink)}.folder-modal-head p{margin:4px 0 0;color:var(--muted)}
+    .folder-modal-body{min-height:0;padding:20px 26px 26px;overflow:auto}
+    .folder-controls{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:12px;margin-bottom:20px}
+    .folder-controls input{width:100%;height:44px;min-width:0;border:1px solid #d9deea;border-radius:10px;padding:0 13px;background:white;color:var(--ink);outline:none}
+    .folder-controls input:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(249,115,22,.12)}
+    .folder-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:16px}
+    .folder-card{min-width:0;padding:18px;text-align:left;color:var(--ink);background:white;border:1px solid #e7eaf1;border-radius:16px;box-shadow:0 8px 24px rgba(30,41,59,.06);transition:transform .2s,border-color .2s,box-shadow .2s}
+    .folder-card:hover,.folder-card:focus-visible{transform:translateY(-2px);border-color:#fdba74;box-shadow:0 14px 30px rgba(249,115,22,.12);outline:none}
+    .folder-card-icon{display:grid;place-items:center;width:44px;height:44px;margin-bottom:13px;border-radius:13px;background:#fff7ed;font-size:23px}
+    .folder-card h3{margin:0 0 7px;font-size:16px;line-height:1.4;overflow-wrap:anywhere}
+    .folder-card p{margin:0;color:var(--muted);font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+    .folder-card-actions{display:flex;gap:9px;margin-top:16px}
+    .folder-card-actions .btn{flex:1;padding:10px 12px;font-size:13px}
+    .folder-empty,.folder-loading{grid-column:1/-1;padding:38px 18px;text-align:center;color:var(--muted);background:#f8f9fc;border:1px dashed #d9deea;border-radius:14px}
+    .folder-detail-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+    .folder-print-actions{display:flex;gap:8px}.folder-detail h3{margin:0 0 14px;color:var(--ink)}
+    .folder-detail .table-wrap{max-height:min(55vh,520px);border:1px solid #e7eaf1;border-radius:12px}
+    .folder-detail table{min-width:760px}
+    .folder-detail th{z-index:1}
+    .folder-grid[hidden],.folder-detail[hidden]{display:none}
+    .folder-print-area{display:none}
+    footer{padding:22px;text-align:center;color:var(--muted);font-size:13px;border-top:1px solid #e8ebf1;background:white}
+    @media(max-width:760px){.nav{padding:9px 14px}.brand-copy strong{font-size:14px}.brand-copy span{display:none}.logo{width:44px;height:44px}.nav-actions .btn{padding:10px 11px;font-size:12px}.hero-inner{grid-template-columns:1fr;padding:58px 20px;gap:35px}.hero h1{font-size:38px;letter-spacing:-1px}.hero .full-name{font-size:13px}.subtitle{font-size:20px}.clock-card{padding:22px}.container{padding:28px 14px}.grid{grid-template-columns:1fr}.field.full{grid-column:auto}form{padding:20px}.card-head{padding:20px}.thank-you-backdrop{padding:14px}.thank-you-card{width:min(560px,100%);max-height:calc(100vh - 28px);max-height:calc(100dvh - 28px);border-radius:22px}.thank-you-content{padding:22px 18px 26px}.thank-you-brand img{width:min(190px,70%);max-height:108px}.thank-you-message{font-size:14px;padding:16px}.thank-you-intro{font-size:14px}.dash-head{align-items:flex-start;gap:12px}.toolbar{grid-template-columns:1fr}.toolbar-actions{overflow:visible;justify-content:stretch}.toolbar-actions>.btn{flex:1 1 calc(50% - 8px)}.meeting-details{min-width:100%;flex-basis:100%}.meeting-details input{width:100%}.table-card{border-radius:0;border-left:0;border-right:0}
+      .folder-backdrop{padding:12px}.folder-modal{max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);border-radius:16px}.folder-modal-head{padding:17px 18px 14px}.folder-modal-head h2{font-size:20px}.folder-modal-head p{font-size:13px}.folder-modal-head>.btn{padding:9px 12px}.folder-modal-body{padding:16px 18px 20px}.folder-controls{grid-template-columns:1fr;gap:9px;margin-bottom:16px}.folder-grid{grid-template-columns:1fr;gap:12px}.folder-card{padding:16px}.folder-detail-head{align-items:stretch;flex-direction:column}.folder-detail-head>.btn,.folder-print-actions .btn{flex:1}.folder-print-actions{width:100%}.folder-detail .table-wrap{max-height:50vh}}
+    @media(max-width:420px){.nav-actions{gap:6px}.nav-actions .btn{padding:9px 10px;font-size:11px}.toolbar-actions>.btn{flex-basis:100%}.folder-backdrop{padding:0}.folder-modal{width:100%;max-height:100vh;max-height:100dvh;height:100vh;height:100dvh;border-radius:0}.folder-modal-head{padding:14px}.folder-modal-body{padding:14px}.folder-card-actions .btn{padding:10px 8px}.folder-detail-head .btn{padding:10px 12px}}
+    @page{size:A4 landscape;margin:8mm}
+    @media print{
+      header,.hero,.attendance-card,.back-link,.modal-backdrop,.toolbar,.toolbar-actions,.stats,.dash-head,footer{display:none!important}
+      body,.dashboard{background:white!important}
+      body{margin:0!important}
+      .dashboard{display:block!important;min-height:0!important;padding:0!important}
+      .container{max-width:none!important;margin:0!important;padding:0!important}
+      .print-only{display:block;margin:0 0 4mm;text-align:center;break-after:avoid}
+      .print-only>img{display:block;width:48mm!important;max-width:45%!important;height:18mm!important;margin:0 auto 2mm;object-fit:contain}
+      .print-heading h2{margin:0 0 1mm;font-size:15pt;font-weight:800}
+      .print-heading p{margin:0;font-size:10pt;font-weight:800}
+      .table-card{max-width:none!important;margin:0!important;overflow:visible!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+      .table-wrap{width:100%!important;max-width:none!important;overflow:visible!important;max-height:none!important}
+      .dashboard .table-wrap table{width:100%!important;min-width:0!important;table-layout:fixed;border-collapse:collapse;font-size:8pt}
+      .dashboard .table-wrap thead{display:table-header-group}
+      .dashboard .table-wrap tr{break-inside:avoid;page-break-inside:avoid}
+      .dashboard .table-wrap th,.dashboard .table-wrap td{padding:1.5mm 1mm;border:0.2mm solid #777;white-space:normal!important;overflow-wrap:anywhere;word-break:normal;line-height:1.2;vertical-align:middle}
+      .dashboard .table-wrap th{position:static;background:#f2f2f2!important;font-size:7.5pt}
+      .dashboard .table-wrap th:nth-child(1),.dashboard .table-wrap td:nth-child(1){width:5%;text-align:center}
+      .dashboard .table-wrap th:nth-child(2),.dashboard .table-wrap td:nth-child(2){width:13%}
+      .dashboard .table-wrap th:nth-child(3),.dashboard .table-wrap td:nth-child(3){width:13%}
+      .dashboard .table-wrap th:nth-child(4),.dashboard .table-wrap td:nth-child(4){width:13%}
+      .dashboard .table-wrap th:nth-child(5),.dashboard .table-wrap td:nth-child(5){width:15%}
+      .dashboard .table-wrap th:nth-child(6),.dashboard .table-wrap td:nth-child(6){width:11%}
+      .dashboard .table-wrap th:nth-child(7),.dashboard .table-wrap td:nth-child(7){width:9%}
+      .dashboard .table-wrap th:nth-child(8),.dashboard .table-wrap td:nth-child(8){width:9%}
+      .dashboard .table-wrap th:nth-child(9),.dashboard .table-wrap td:nth-child(9){width:12%;text-align:center}
+      .signature-preview{display:block;width:100%!important;max-width:34mm;height:14mm!important;margin:0 auto;object-fit:contain;object-position:center}
+      body *{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+      body.printing-folder> :not(#folderPrintArea){display:none!important}
+      body.printing-folder #folderPrintArea{display:block!important;padding:0;color:#111;background:white}
+      body.printing-folder #folderPrintArea h1,body.printing-folder #folderPrintArea h2,body.printing-folder #folderPrintArea p{text-align:center;margin:0 0 6px}
+      body.printing-folder #folderPrintArea h1{font-size:20px}
+      body.printing-folder #folderPrintArea h2{font-size:16px;margin:12px 0 4px}
+      body.printing-folder #folderPrintArea table{width:100%;border-collapse:collapse;font-size:10px}
+      body.printing-folder #folderPrintArea th,body.printing-folder #folderPrintArea td{padding:7px;border:1px solid #999;white-space:normal}
+      body.printing-folder #folderPrintArea th{position:static;background:#f2f2f2}
+    }
+  </style>
+</head>
+<body>
+<div class="rainbow-line"></div>
+<header>
+  <div class="nav">
+    <div class="brand"><img class="logo" src="assets/LaraLogo.svg" alt="LARA – Lazareto Advocate Rainbow Association"></div>
+    <div class="nav-actions"><button id="homeNavButton" class="btn btn-outline" onclick="showHome()">Home</button><button id="adminLoginNav" class="btn btn-primary" onclick="openLogin()" hidden>Administrator Login</button><button id="adminLogoutNav" class="btn btn-primary" onclick="logoutAdmin()" hidden>Log Out</button></div>
+  </div>
+</header>
+<main>
+  <section id="homeView" class="view active">
+    <div class="hero"><div class="hero-inner">
+      <div class="hero-copy"><div class="full-name">LAZARETO ADVOCATE RAINBOW ASSOCIATION</div><h1><span class="gradient-text">LARA</span><br>Online Attendance Monitoring</h1><p>Record your attendance quickly, securely, and accurately for every LARA meeting and activity.</p><div class="hero-actions"><button class="btn btn-attend" onclick="showAttendance()">CLICK TO ATTEND</button></div></div>
+      <div class="clock-card"><div class="clock-label">Philippine Standard Time</div><div id="clockTime">--:--:--</div><div id="clockDate">Loading date...</div><div class="pills"><span></span><span></span><span></span><span></span><span></span><span></span></div></div>
+    </div></div>
+  </section>
+
+  <section id="attendanceView" class="view"><div class="container"><div class="attendance-card">
+    <button class="back-link" onclick="showHome()">← Back to Home</button><div class="card-head"><h2>Member Attendance</h2><p>Please enter your complete information.</p></div>
+    <div id="attendanceMessage" class="message"></div>
+    <form id="attendanceForm" autocomplete="on">
+      <h3 class="section-title">Personal Information</h3><div class="grid">
+        <div class="field full"><label for="memberCode">Member ID <span>(returning members)</span></label><input id="memberCode" name="memberCode" maxlength="32" autocomplete="off" placeholder="Leave blank for first-time registration"><small id="memberLookupStatus" aria-live="polite"></small></div>
+        <div class="field"><label for="surname">Surname <span>*</span></label><input id="surname" name="surname" maxlength="60" required></div>
+        <div class="field"><label for="firstName">First Name <span>*</span></label><input id="firstName" name="firstName" maxlength="60" required></div>
+        <div class="field full"><label for="middleName">Complete Middle Name <span>*</span></label><input id="middleName" name="middleName" maxlength="80" required><label class="no-middle-option"><input id="noMiddleName" type="checkbox"> No Middle Name</label></div>
+        <div class="field"><label for="attendanceStatus">Status</label><input class="readonly" id="attendanceStatus" name="status" value="Present" readonly></div>
+      </div>
+      <h3 class="section-title">Digital Signature</h3>
+      <div class="signature-section">
+        <canvas id="signatureCanvas" class="signature-canvas" aria-label="Digital signature pad" role="img"></canvas>
+        <div class="signature-controls"><button id="clearSignature" class="btn btn-outline" type="button">Clear Signature</button><button id="saveSignature" class="btn btn-primary" type="button">Save Signature</button><span id="signatureStatus" aria-live="polite">A saved signature is required before submitting.</span></div>
+      </div>
+      <h3 class="section-title">Attendance Information</h3><div class="grid">
+        <div class="field"><label for="attendanceDate">Date</label><input class="readonly" id="attendanceDate" readonly></div>
+        <div class="field"><label for="attendanceTime">Time (Philippine Time)</label><input class="readonly" id="attendanceTime" readonly></div>
+        <div class="field full"><label for="position">Position <span>*</span></label><select id="position" required><option value="">Select Position</option><option>Punong Barangay</option><option>Councilor</option><option>SK Chairman</option><option>SK Councilor</option><option>Officers</option><option>Committee</option><option>Members</option></select></div>
+      </div><div class="form-actions"><button id="presentButton" class="btn btn-present" type="submit">PRESENT</button></div>
+    </form>
+  </div></div></section>
+
+  <section id="dashboardView" class="view dashboard"><div class="dash-head"><div><h1>Administrator Dashboard</h1><p>Attendance records and reporting</p><p class="activity-title-display">Current activity: <strong id="activityTitleDisplay">No title set</strong></p></div></div>
+    <div class="stats"><div class="stat-card"><span>Total Present</span><strong id="totalPresent">0</strong></div></div>
+    <div class="table-card"><div class="toolbar"><input id="searchInput" type="search" placeholder="Search by surname or name" oninput="renderTable()"><select id="positionFilter" onchange="renderTable()"><option value="">All Positions</option><option>Punong Barangay</option><option>Councilor</option><option>SK Chairman</option><option>SK Councilor</option><option>Officers</option><option>Committee</option><option>Members</option></select><input id="dateFilter" type="date" onchange="renderTable()"></div>
+      <div class="toolbar-actions"><div class="meeting-details"><label for="activityName">Activity/Meeting Title:</label><input id="activityName" type="text" maxlength="120" placeholder="Enter activity or meeting title" autocomplete="off"><span id="activityTitleStatus" class="activity-title-status" aria-live="polite"></span></div><button class="btn btn-outline" onclick="openAttendanceFolder()">📁 Folder</button><button class="btn btn-outline" onclick="exportExcel()">Export to Excel</button><button class="btn btn-print-sheet" onclick="printSheet()">Print Attendance Sheet</button></div>
+      <div class="print-only"><img src="assets/LaraLogo.svg" alt="LARA – Lazareto Advocate Rainbow Association" style="width:220px;max-width:45%;height:auto"><div class="print-heading"><h2>ATTENDANCE</h2><p>Title: <span id="printActivity">General Attendance</span></p></div></div>
+      <div class="table-wrap"><table><thead><tr><th>No.</th><th>Surname</th><th>First Name</th><th>Middle Name</th><th>Position</th><th>Activity</th><th>Date</th><th>Time</th><th>Status</th><th>Signature</th></tr></thead><tbody id="recordsBody"></tbody></table></div>
+    </div><div style="height:28px"></div>
+  </section>
+</main>
+<footer>&copy; 2026 LARA – Lazareto Advocate Rainbow Association</footer>
+
+<div id="loginModal" class="modal-backdrop" role="dialog" aria-modal="true"><div class="modal"><h2>Administrator Login</h2><p>Enter the authorized administrator password.</p><div id="loginError" class="message error"></div><div class="field"><label for="adminPassword">Password</label><input id="adminPassword" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter') loginAdmin()"></div><div class="modal-actions"><button class="btn btn-outline" onclick="closeLogin()">Cancel</button><button id="loginButton" class="btn btn-primary" onclick="loginAdmin()">Login</button></div></div></div>
+<div id="successModal" class="modal-backdrop" role="dialog" aria-modal="true"><div class="modal"><h2>✓ Attendance Recorded</h2><p id="successText">Thank you! Your attendance was successfully saved.</p><div class="modal-actions"><button class="btn btn-primary" onclick="closeSuccess()">OK</button></div></div></div>
+<div id="thankYouModal" class="modal-backdrop thank-you-backdrop" role="dialog" aria-modal="true" aria-labelledby="thankYouTitle">
+  <div class="modal thank-you-card">
+    <div class="thank-you-rainbow" aria-hidden="true"></div>
+    <div class="thank-you-content">
+      <div class="thank-you-brand"><img src="assets/LaraLogo.svg" alt="LARA — Lazareto Advocate Rainbow Association"></div>
+      <div class="thank-you-check" aria-hidden="true">✓</div>
+      <p class="thank-you-kicker">CELEBRATING EVERY IDENTITY</p>
+      <h2 id="thankYouTitle">Thank You for Coming!</h2>
+      <p class="thank-you-intro">Your presence brings color, strength, and heart to our community.</p>
+      <div class="thank-you-message">
+        <p>Thank you for showing up, sharing your energy, and helping make LARA a welcoming space where LGBTQIA+ people and allies are seen, respected, and celebrated.</p>
+        <p>Your participation helps us build a stronger, kinder community rooted in unity, solidarity, and care for one another. Keep sharing your voice—every story and every identity belongs here.</p>
+      </div>
+      <p class="thank-you-signoff">We’re glad you’re part of the LARA family. 🌈</p>
+      <div class="thank-you-actions"><button class="btn btn-primary" onclick="returnToHome()">BACK TO HOME</button></div>
+    </div>
+  </div>
+</div>
+
+<div id="folderModal" class="modal-backdrop folder-backdrop" role="dialog" aria-modal="true" aria-labelledby="folderModalTitle"><div class="modal folder-modal"><div class="folder-modal-head"><div><h2 id="folderModalTitle">Attendance Folder</h2><p>Previous daily attendance records</p></div><button class="btn btn-outline" onclick="closeAttendanceFolder()">Close</button></div><div class="folder-modal-body"><div class="folder-controls"><input id="folderSearch" type="search" placeholder="Search month, date, or year" oninput="renderFolders()" aria-label="Search attendance folders"><input id="folderDateFilter" type="date" onchange="renderFolders()" aria-label="Filter folders by date"></div><div id="folderList" class="folder-grid"><div class="folder-loading">Loading attendance folders...</div></div><div id="folderDetail" class="folder-detail" hidden></div></div></div></div>
+
+<section id="folderPrintArea" class="folder-print-area" aria-hidden="true">
+  <h1>LARA</h1>
+  <p>LAZARETO ADVOCATE RAINBOW ASSOCIATION</p>
+  <h2 id="printAttendanceDate"></h2>
+  <p>Printed: <span id="printPrintedDate"></span></p>
+  <table><thead><tr><th>No.</th><th>Surname</th><th>First Name</th><th>Middle Name</th><th>Position</th><th>Activity</th><th>Time In</th><th>Status</th><th>Signature</th></tr></thead><tbody id="printAttendanceBody"></tbody></table>
+</section>
+
+<script>
+let adminAuthenticated=false, attendanceFolders=[], allRecords=[], submitting=false;
+let activeActivityTitle='',activitySaveTimer=null,activitySaveVersion=0,activitySaveQueue=Promise.resolve();
+
+function syncAdminNavigation(){document.getElementById('homeNavButton').hidden=adminAuthenticated;document.getElementById('adminLoginNav').hidden=adminAuthenticated;document.getElementById('adminLogoutNav').hidden=!adminAuthenticated}
+function switchView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');syncAdminNavigation();window.scrollTo(0,0)}
+function showHome(){switchView('homeView')}
+function showAttendance(){switchView('attendanceView');window.signaturePad.resize();updateClock();document.getElementById('surname').focus()}
+function showDashboard(){switchView('dashboardView')}
+function openLogin(){document.getElementById('loginModal').classList.add('open');setTimeout(()=>document.getElementById('adminPassword').focus(),50)}
+function closeLogin(){document.getElementById('loginModal').classList.remove('open');document.getElementById('adminPassword').value='';document.getElementById('loginError').className='message'}
+function closeSuccess(){document.getElementById('successModal').classList.remove('open');document.getElementById('thankYouModal').classList.add('open')}
+function returnToHome(){
+  document.getElementById('thankYouModal').classList.remove('open');
+  document.getElementById('attendanceForm').reset();
+  syncMiddleNameField();
+  window.signaturePad.clear();
+  document.getElementById('memberLookupStatus').textContent='';
+  document.getElementById('attendanceMessage').className='message';
+  document.getElementById('attendanceMessage').textContent='';
+  updateClock();
+  showHome();
+}
+
+function apiRequest(url,method='GET',body=null){
+  const options={method,headers:{'Content-Type':'application/json'},credentials:'same-origin'};
+  if(body!==null)options.body=JSON.stringify(body);
+  return fetch(url,options).then(async response=>await response.json());
+}
+
+let clockOffset=0, clockReady=false;
+function renderClock(){
+  if(!clockReady)return;
+  const now=new Date(Date.now()+clockOffset);
+  const time=now.toLocaleTimeString('en-US',{timeZone:'Asia/Manila',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true}).replace(/\u202f/g,' ');
+  const date=now.toLocaleDateString('en-CA',{timeZone:'Asia/Manila'});
+  document.getElementById('clockTime').textContent=time;
+  document.getElementById('clockDate').textContent=now.toLocaleDateString('en-PH',{timeZone:'Asia/Manila',weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('attendanceTime').value=time;
+  document.getElementById('attendanceDate').value=date;
+}
+function updateClock(){
+  apiRequest('api.php?action=clock','GET').then(clock=>{
+    if(!clock.success||!clock.epoch)return;
+    clockOffset=clock.epoch*1000-Date.now();clockReady=true;renderClock();
+  }).catch(()=>{});
+}
+
+function getActivityTitle(){return activeActivityTitle||'General Attendance'}
+function updateActivityTitleDisplay(){document.getElementById('activityTitleDisplay').textContent=activeActivityTitle||'No title set'}
+function saveActivityTitle(immediate=false){
+  const input=document.getElementById('activityName'), status=document.getElementById('activityTitleStatus'), title=input.value.trim();
+  if(title&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(title)){status.textContent='Enter an activity title, not an email address.';updateActivityTitleDisplay();return}
+  activeActivityTitle=title;
+  updateActivityTitleDisplay();
+  updatePrintActivity();
+  if(!adminAuthenticated){status.textContent='Log in as administrator to save the activity title.';return}
+  const version=++activitySaveVersion;
+  clearTimeout(activitySaveTimer);
+  status.textContent='Saving activity title to database...';
+  const save=()=>{
+    activitySaveQueue=activitySaveQueue.catch(()=>{}).then(()=>apiRequest('api.php?action=activity-title','POST',{activityTitle:title})).then(response=>{
+      if(!response.success)throw new Error(response.message||'Unable to save activity title.');
+      if(version===activitySaveVersion)status.textContent=title?'Activity title saved to database.':'Activity title cleared.';
+    }).catch(error=>{
+      if(version===activitySaveVersion)status.textContent=error.message||'Unable to save the activity title.';
+    });
+  };
+  activitySaveTimer=setTimeout(save,immediate?0:500);
+}
+function loadActivityTitle(){
+  const input=document.getElementById('activityName'), status=document.getElementById('activityTitleStatus');
+  apiRequest('api.php?action=activity-title','GET').then(response=>{
+    if(!response.success)throw new Error(response.message||'Unable to load the activity title.');
+    activeActivityTitle=typeof response.activityTitle==='string'?response.activityTitle:'';
+    input.value=activeActivityTitle;
+    status.textContent=activeActivityTitle?'Activity title loaded from database.':'';
+    updateActivityTitleDisplay();
+    updatePrintActivity();
+  }).catch(error=>{status.textContent=error.message||'Unable to load the activity title from the database.'});
+}
+document.getElementById('activityName').addEventListener('input',()=>saveActivityTitle());
+document.getElementById('activityName').addEventListener('blur',()=>saveActivityTitle(true));
+loadActivityTitle();
+setInterval(renderClock,1000);setInterval(updateClock,30000);updateClock();
+
+function loginAdmin(){
+  const password=document.getElementById('adminPassword').value;
+  if(!password){document.getElementById('loginError').textContent='Password is required.';document.getElementById('loginError').className='message error';return}
+  const button=document.getElementById('loginButton');button.disabled=true;button.textContent='Logging in...';
+  apiRequest('api.php?action=login','POST',{password}).then(res=>{
+    button.disabled=false;button.textContent='Login';
+    if(res.success){adminAuthenticated=true;syncAdminNavigation();closeLogin();showDashboard();loadRecords()}
+    else{document.getElementById('loginError').textContent=res.message||'Login failed.';document.getElementById('loginError').className='message error'}
+  }).catch(()=>{button.disabled=false;button.textContent='Login';document.getElementById('loginError').textContent='Unable to connect to the server.';document.getElementById('loginError').className='message error'});
+}
+function logoutAdmin(){apiRequest('api.php?action=logout','POST',{}).finally(()=>{adminAuthenticated=false;allRecords=[];attendanceFolders=[];renderTable();showHome()})}
+
+function loadRecords(){
+  apiRequest('api.php?action=records','GET').then(res=>{
+    if(!res.success){alert(res.message||'Administrator session expired.');logoutAdmin();return}
+    allRecords=res.records;attendanceFolders=Array.isArray(res.folders)?res.folders:[];renderTable();
+  }).catch(()=>alert('Unable to load attendance records.'));
+}
+function initializeAdminSession(){
+  apiRequest('api.php?action=session','GET').then(res=>{
+    adminAuthenticated=!!(res.success&&res.authenticated);
+    syncAdminNavigation();
+    if(adminAuthenticated){showDashboard();loadRecords()}
+  }).catch(()=>{adminAuthenticated=false;syncAdminNavigation()});
+}
+initializeAdminSession();
+function renderTable(){
+  const q=document.getElementById('searchInput').value.trim().toLowerCase();const pos=document.getElementById('positionFilter').value;const date=document.getElementById('dateFilter').value;
+  const filtered=allRecords.filter(r=>(!q||(r.surname+' '+r.firstName+' '+r.middleName).toLowerCase().includes(q))&&(!pos||r.position===pos)&&(!date||r.date===date)).sort((a,b)=>a.surname.localeCompare(b.surname,'en',{sensitivity:'base'})||a.firstName.localeCompare(b.firstName,'en',{sensitivity:'base'}));
+  document.getElementById('totalPresent').textContent=filtered.filter(record=>record.status==='Present').length;const body=document.getElementById('recordsBody');
+  if(!filtered.length){body.innerHTML='<tr><td colspan="10" class="empty">No attendance records found.</td></tr>';return}
+  body.innerHTML=filtered.map((r,i)=>'<tr><td>'+ (i+1)+'</td><td>'+esc(r.surname)+'</td><td>'+esc(r.firstName)+'</td><td>'+esc(r.middleName)+'</td><td>'+esc(r.position)+'</td><td>'+esc(r.activityTitle)+'</td><td>'+esc(r.date)+'</td><td>'+esc(r.time)+'</td><td><span class="status">'+esc(r.status)+'</span></td><td>'+signatureMarkup(r.signature)+'</td></tr>').join('');
+}
+function esc(value){const div=document.createElement('div');div.textContent=value==null?'':value;return div.innerHTML}
+function signatureMarkup(signature){if(typeof signature!=='string'||!signature.startsWith('data:image/png;base64,'))return '<span class="signature-missing">—</span>';return '<img class="signature-preview" src="'+esc(signature)+'" alt="Member signature">'}
+
+function updatePrintActivity(){document.getElementById('printActivity').textContent=getActivityTitle()}
+function printSheet(){updatePrintActivity();window.print()}
+window.addEventListener('beforeprint',updatePrintActivity);
+function exportExcel(){
+  const q=document.getElementById('searchInput').value.trim().toLowerCase();const pos=document.getElementById('positionFilter').value;const date=document.getElementById('dateFilter').value;
+  const filtered=allRecords.filter(r=>(!q||(r.surname+' '+r.firstName+' '+r.middleName).toLowerCase().includes(q))&&(!pos||r.position===pos)&&(!date||r.date===date)).sort((a,b)=>a.surname.localeCompare(b.surname,'en',{sensitivity:'base'})||a.firstName.localeCompare(b.firstName,'en',{sensitivity:'base'}));
+  const activity=getActivityTitle();
+  let html='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>table{border-collapse:collapse;font-family:Arial}th,td{border:1px solid #777;padding:6px}th{background:#ddd}</style></head><body><h2>LARA</h2><h3>LAZARETO ADVOCATE RAINBOW ASSOCIATION</h3><h3>'+esc(activity)+'</h3><table><tr><th>No.</th><th>Surname</th><th>First Name</th><th>Middle Name</th><th>Position</th><th>Activity</th><th>Date</th><th>Time</th><th>Status</th></tr>';
+  filtered.forEach((r,i)=>{html+='<tr><td>'+ (i+1)+'</td><td>'+esc(r.surname)+'</td><td>'+esc(r.firstName)+'</td><td>'+esc(r.middleName)+'</td><td>'+esc(r.position)+'</td><td>'+esc(r.activityTitle)+'</td><td>'+esc(r.date)+'</td><td>'+esc(r.time)+'</td><td>'+esc(r.status)+'</td></tr>'});html+='</table></body></html>';
+  const blob=new Blob(['\ufeff'+html],{type:'application/vnd.ms-excel;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='LARA_Attendance.xls';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+}
+
+function syncMiddleNameField(){const noMiddleName=document.getElementById('noMiddleName').checked;const middleName=document.getElementById('middleName');middleName.disabled=noMiddleName;middleName.required=!noMiddleName;if(noMiddleName)middleName.value=''}
+document.getElementById('noMiddleName').addEventListener('change',syncMiddleNameField);
+document.getElementById('memberCode').addEventListener('input',()=>{document.getElementById('memberLookupStatus').textContent='';if(window.signaturePad)window.signaturePad.clear('Member ID changed. Retrieve the saved signature or sign again.')});
+document.getElementById('memberCode').addEventListener('blur',lookupMember);
+function isCompleteMiddleName(value){const words=value.split(/[^\p{L}]+/u).filter(Boolean);return words.length>0&&words.every(word=>Array.from(word).length>1)}
+async function lookupMember(){
+  const memberCode=document.getElementById('memberCode').value.trim();
+  if(!memberCode)return;
+  const surname=document.getElementById('surname').value.trim();
+  const firstName=document.getElementById('firstName').value.trim();
+  const middleName=document.getElementById('noMiddleName').checked?'':document.getElementById('middleName').value.trim();
+  const status=document.getElementById('memberLookupStatus');
+  if(!surname||!firstName){status.textContent='Enter surname and first name before looking up a Member ID.';return}
+  status.textContent='Retrieving member profile...';
+  try{
+    const response=await apiRequest('api.php?action=member','POST',{memberCode,surname,firstName,middleName});
+    if(!response.success){status.textContent=response.message||'Unable to retrieve member profile.';window.signaturePad.clear();return}
+    document.getElementById('memberCode').value=response.member.memberCode;
+    window.signaturePad.load(response.member.signature);
+    status.textContent='Member profile found. Review the saved signature or update it below.';
+  }catch(error){status.textContent='Unable to connect to the server. Please try again.';window.signaturePad.clear()}
+}
+async function saveMemberSignature(){
+  const surname=document.getElementById('surname').value.trim();
+  const firstName=document.getElementById('firstName').value.trim();
+  const noMiddleName=document.getElementById('noMiddleName').checked;
+  const middleName=noMiddleName?'':document.getElementById('middleName').value.trim();
+  const memberCode=document.getElementById('memberCode').value.trim();
+  const status=document.getElementById('memberLookupStatus');
+  if(!surname||!firstName){status.textContent='Enter your surname and first name before saving your signature.';window.signaturePad.setStatus(status.textContent);return}
+  if(!noMiddleName&&!isCompleteMiddleName(middleName)){status.textContent='Enter your complete middle name or select No Middle Name.';window.signaturePad.setStatus(status.textContent);return}
+  if(!window.signaturePad.save())return;
+  try{
+    const response=await apiRequest('api.php?action=save-member','POST',{surname,firstName,middleName,noMiddleName,memberCode,signature:window.signaturePad.getSavedData()});
+    if(!response.success){status.textContent=response.message||'Unable to save the member signature.';window.signaturePad.setStatus(status.textContent);return}
+    document.getElementById('memberCode').value=response.memberCode;
+    window.signaturePad.markPersisted();
+    status.textContent=response.message+' Keep this Member ID: '+response.memberCode;
+  }catch(error){status.textContent='Unable to connect to the server. Signature is not saved yet.';window.signaturePad.setStatus(status.textContent)}
+}
+
+function showAttendanceMessage(text,type){const el=document.getElementById('attendanceMessage');el.textContent=text;el.className='message '+type;el.scrollIntoView({block:'nearest',behavior:'smooth'})}
+
+document.getElementById('attendanceForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  if(submitting)return;
+  const surname=document.getElementById('surname').value.trim();
+  const firstName=document.getElementById('firstName').value.trim();
+  const noMiddleName=document.getElementById('noMiddleName').checked;
+  const middleName=noMiddleName?'':document.getElementById('middleName').value.trim();
+  const memberCode=document.getElementById('memberCode').value.trim();
+  const signature=window.signaturePad.getSavedData();
+  const position=document.getElementById('position').value;
+  const status=document.getElementById('attendanceStatus').value.trim() || 'Present';
+  if(!surname||!firstName||!position){showAttendanceMessage('Please complete surname, first name, and position.','error');return}
+  if(!noMiddleName){
+    if(!isCompleteMiddleName(middleName)){showAttendanceMessage('Enter your complete middle name, not initials only, or select No Middle Name.','error');document.getElementById('middleName').focus();return}
+  }
+  if(!signature||!window.signaturePad.isPersisted()){showAttendanceMessage('Save your signature to the member profile before submitting attendance.','error');return}
+  const displayName=[firstName,middleName,surname].filter(Boolean).join(' ');
+  if(!confirm('Submit attendance as '+displayName+' ('+position+')?'))return;
+  submitting=true;
+  const button=document.getElementById('presentButton');
+  button.disabled=true;button.textContent='Recording Attendance...';
+  apiRequest('api.php?action=submit','POST',{surname,firstName,middleName,noMiddleName,memberCode,signature,position,status,activityTitle:getActivityTitle()}).then(res=>{
+    submitting=false;button.disabled=false;button.textContent='PRESENT';
+    if(res.success){
+      showAttendanceMessage(res.message,'success');
+      document.getElementById('successText').textContent=res.message+' Recorded for '+[res.record.firstName,res.record.middleName,res.record.surname].filter(Boolean).join(' ')+' at '+res.record.time+'. Save your Member ID for future attendance: '+res.record.memberCode;
+      document.getElementById('successModal').classList.add('open');
+      document.getElementById('attendanceForm').reset();syncMiddleNameField();window.signaturePad.clear();document.getElementById('memberLookupStatus').textContent='';updateClock();
+    }else{showAttendanceMessage(res.message||'Unable to record attendance.','error')}
+  }).catch(()=>{submitting=false;button.disabled=false;button.textContent='PRESENT';showAttendanceMessage('Unable to connect to the server. Please try again.','error')});
+});</script>
+<script src="assets/signature-pad.js"></script>
+<script src="assets/attendance-folder.js"></script>
+</body>
+</html>
